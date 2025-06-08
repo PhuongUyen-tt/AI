@@ -4,15 +4,18 @@ import joblib
 import os
 from sklearn.preprocessing import LabelEncoder
 
+# --- Debugging: Log Current Directory ---
+st.write(f"Current working directory: {os.getcwd()}")
+st.write(f"Files in directory: {os.listdir('.')}")
+
 # --- File Paths ---
-# Files are in the same directory as app.py in the GitHub repository
 model_path = 'gradient_boosting_model.pkl'
 features_path = 'gradient_boosting_features.pkl'
 label_encoder_target_path = 'product_category_label_encoder.pkl'
 data_path = 'data.csv'  # Assumes data.csv is in the repository's root directory
 
 # --- Alternative: Load data.csv from a GitHub raw URL ---
-# If data.csv is hosted on GitHub, uncomment and update the URL below
+# Uncomment and update the URL if using a GitHub raw URL for data.csv
 # data_url = 'https://raw.githubusercontent.com/your-username/your-repo/main/data.csv'
 # try:
 #     original_df = pd.read_csv(data_url)
@@ -28,7 +31,7 @@ try:
     unique_seasons = sorted(original_df['Season'].dropna().unique().tolist())
     unique_sizes = sorted(original_df['Size'].dropna().unique().tolist())
 except FileNotFoundError:
-    st.error(f"Data file 'data.csv' not found in the repository. Ensure it is uploaded.")
+    st.error(f"Data file 'data.csv' not found at '{data_path}'. Ensure it is uploaded to the repository's root directory.")
     st.stop()
 except KeyError as e:
     st.error(f"Missing column in data file: {e}. Expected columns: store_location, Gender, Season, Size.")
@@ -39,16 +42,19 @@ except Exception as e:
 
 # --- Load Trained Model and Artifacts ---
 if not os.path.exists(model_path):
-    st.error(f"Model file '{model_path}' not found. Ensure it is uploaded to the repository.")
+    st.error(f"Model file '{model_path}' not found at '{os.path.abspath(model_path)}'. Ensure it is uploaded to the repository's root directory.")
     st.stop()
 try:
     model = joblib.load(model_path)
+    # Log model type for debugging
+    st.write(f"Loaded model type: {type(model).__name__}")
 except Exception as e:
     st.error(f"Error loading model file: {e}")
+    st.write("This error may occur if the model depends on a library like 'xgboost'. Ensure 'xgboost' is included in requirements.txt.")
     st.stop()
 
 if not os.path.exists(features_path):
-    st.error(f"Feature columns file '{features_path}' not found. Ensure it is uploaded to the repository.")
+    st.error(f"Feature columns file '{features_path}' not found at '{os.path.abspath(features_path)}'. Ensure it is uploaded to the repository's root directory.")
     st.stop()
 try:
     expected_features = joblib.load(features_path)
@@ -57,7 +63,7 @@ except Exception as e:
     st.stop()
 
 if not os.path.exists(label_encoder_target_path):
-    st.warning(f"Target LabelEncoder file '{label_encoder_target_path}' not found. Predictions will be numerical.")
+    st.warning(f"Target LabelEncoder file '{label_encoder_target_path}' not found at '{os.path.abspath(label_encoder_target_path)}'. Predictions will be numerical.")
     label_encoder_y = None
 else:
     try:
@@ -73,13 +79,13 @@ st.header("Predict Suggested Product Category")
 # --- Input Widgets ---
 st.subheader("Enter Customer and Transaction Details")
 
-# Categorical inputs with help text
+# Categorical inputs
 store_location = st.selectbox("Store Location", unique_store_locations, help="Select the store location")
 gender = st.selectbox("Gender", unique_genders, help="Select the customer's gender")
 season = st.selectbox("Season", unique_seasons, help="Select the season")
 size = st.selectbox("Size", unique_sizes, help="Select the product size")
 
-# Numerical inputs with constraints
+# Numerical inputs
 age = st.number_input("Age", min_value=0, max_value=120, value=30, step=1, help="Customer's age")
 total_bill = st.number_input("Total Bill", min_value=0.0, value=100.0, step=0.1, help="Total bill amount")
 transaction_qty = st.number_input("Transaction Quantity", min_value=1, value=1, step=1, help="Number of items purchased")
@@ -103,7 +109,6 @@ if st.button("Predict Product Category"):
     for col in categorical_features:
         if col in input_df.columns:
             le = LabelEncoder()
-            # Fit LabelEncoder on unique values from original data
             le.fit(original_df[col].dropna().unique())
             input_df[col] = le.transform(input_df[col])
 
@@ -120,14 +125,14 @@ if st.button("Predict Product Category"):
             st.success(f"Predicted Product Category (Numerical Label): **{int(predicted_label)}**")
     except Exception as e:
         st.error(f"Error during prediction: {e}")
-        st.write("Ensure input values are valid and all model files are loaded correctly.")
+        st.write("Ensure input values match the model's expected features and the model is correctly loaded.")
 
 # --- Instructions ---
 st.markdown("---")
 st.markdown("**How to Run This App:**")
 st.code("1. Save this code as `app.py`.")
-st.code("2. Ensure 'data.csv', 'gradient_boosting_model.pkl', 'gradient_boosting_features.pkl', and 'product_category_label_encoder.pkl' are in the same repository.")
-st.code("3. Include 'requirements.txt' with dependencies: streamlit, pandas, scikit-learn, joblib.")
+st.code("2. Ensure 'data.csv', 'gradient_boosting_model.pkl', 'gradient_boosting_features.pkl', and 'product_category_label_encoder.pkl' are in the repository's root directory.")
+st.code("3. Include 'requirements.txt' with: streamlit, pandas, scikit-learn, joblib, xgboost.")
 st.code("4. Run locally: `streamlit run app.py`")
 st.code("5. For Streamlit Cloud, deploy via your GitHub repository with all files.")
-st.markdown("Ensure all files are uploaded to your GitHub repository for Streamlit Cloud deployment.")
+st.markdown("Ensure all files are in the repository's root directory and 'xgboost' is installed.")
