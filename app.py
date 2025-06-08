@@ -47,7 +47,7 @@ if not os.path.exists(model_path):
 try:
     model = joblib.load(model_path)
     # Log model type for debugging
-    st.write(f"Loaded model type: {type(model).__name__}")
+    #st.write(f"Loaded model type: {type(model).__name__}")
 except Exception as e:
     st.error(f"Error loading model file: {e}")
     st.write("This error may occur if the model depends on a library like 'xgboost'. Ensure 'xgboost' is included in requirements.txt.")
