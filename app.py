@@ -127,12 +127,3 @@ if st.button("Predict Product Category"):
         st.error(f"Error during prediction: {e}")
         st.write("Ensure input values match the model's expected features and the model is correctly loaded.")
 
-# --- Instructions ---
-st.markdown("---")
-st.markdown("**How to Run This App:**")
-st.code("1. Save this code as `app.py`.")
-st.code("2. Ensure 'data.csv', 'gradient_boosting_model.pkl', 'gradient_boosting_features.pkl', and 'product_category_label_encoder.pkl' are in the repository's root directory.")
-st.code("3. Include 'requirements.txt' with: streamlit, pandas, scikit-learn, joblib, xgboost.")
-st.code("4. Run locally: `streamlit run app.py`")
-st.code("5. For Streamlit Cloud, deploy via your GitHub repository with all files.")
-st.markdown("Ensure all files are in the repository's root directory and 'xgboost' is installed.")
