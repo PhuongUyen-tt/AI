@@ -5,14 +5,14 @@ import os
 from sklearn.preprocessing import LabelEncoder
 
 # --- Debugging: Log Current Directory ---
-st.write(f"Current working directory: {os.getcwd()}")
-st.write(f"Files in directory: {os.listdir('.')}")
+#st.write(f"Current working directory: {os.getcwd()}")
+#st.write(f"Files in directory: {os.listdir('.')}")
 
 # --- File Paths ---
-model_path = 'gradient_boosting_model.pkl'
-features_path = 'gradient_boosting_features.pkl'
-label_encoder_target_path = 'product_category_label_encoder.pkl'
-data_path = 'data.csv'  # Assumes data.csv is in the repository's root directory
+#model_path = 'gradient_boosting_model.pkl'
+#features_path = 'gradient_boosting_features.pkl'
+#label_encoder_target_path = 'product_category_label_encoder.pkl'
+#data_path = 'data.csv'  # Assumes data.csv is in the repository's root directory
 
 # --- Alternative: Load data.csv from a GitHub raw URL ---
 # Uncomment and update the URL if using a GitHub raw URL for data.csv
